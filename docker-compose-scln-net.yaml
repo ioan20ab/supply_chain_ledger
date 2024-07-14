@@ -1,0 +1,33 @@
+services:
+    orderer.example.com:
+        container_name: orderer.example.com
+        image: hyperledger/fabric-orderer:$IMAGE_TAG
+        environment:..
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+        command: orderer
+        volumes:..
+        ports:
+            - 7050:7050
+        networks:
+            - pln
+    peer0.org1.example.com:
+        container_name: peer0.org1.example.com
+        image: hyperledger/fabric-peer:$IMAGE_TAG
+        environment:
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_pln
+            ..
+            - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+            - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+            - CORE_PEER_CHAINCODEADDRESS=peer0.org1.example.com:7052
+            - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.example.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:7051
+            - CORE_PEER_LOCALMSPID=Org1MSP
+        volumes:
+        ...
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command: peer node start
+        ports:
+            - 7051:7051
+        networks:
+            - pln
